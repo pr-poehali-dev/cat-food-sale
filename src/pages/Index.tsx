@@ -2,10 +2,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
+import Header from '@/components/Header';
+import ProductCard from '@/components/ProductCard';
+import ReviewCard from '@/components/ReviewCard';
+import Footer from '@/components/Footer';
 
 const products = [
   {
@@ -134,42 +138,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Icon name="Cat" size={32} className="text-primary" />
-              <h1 className="text-2xl font-bold text-primary">КотоМаркет</h1>
-            </div>
-            <nav className="hidden md:flex gap-6">
-              {[
-                { id: 'home', label: 'Главная', icon: 'Home' },
-                { id: 'catalog', label: 'Каталог', icon: 'ShoppingBag' },
-                { id: 'articles', label: 'Статьи', icon: 'BookOpen' },
-                { id: 'reviews', label: 'Отзывы', icon: 'Star' },
-                { id: 'contacts', label: 'Контакты', icon: 'Phone' }
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveSection(item.id)}
-                  className={`flex items-center gap-2 transition-colors ${
-                    activeSection === item.id 
-                      ? 'text-primary font-semibold' 
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <Icon name={item.icon} size={18} />
-                  {item.label}
-                </button>
-              ))}
-            </nav>
-            <Button variant="default" size="sm">
-              <Icon name="ShoppingCart" size={18} className="mr-2" />
-              Корзина (0)
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header activeSection={activeSection} onNavigate={setActiveSection} />
 
       <main className="container mx-auto px-4 py-8">
         {activeSection === 'home' && (
@@ -214,36 +183,7 @@ const Index = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {products.slice(0, 3).map(product => (
-                  <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    <CardHeader className="p-0">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-48 object-cover"
-                      />
-                    </CardHeader>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="secondary">
-                          {product.category === 'dry' ? 'Сухой корм' : 'Влажный корм'}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground mb-3">{product.description}</p>
-                      <div className="flex items-center gap-1 mb-3">
-                        <Icon name="Star" size={16} className="text-yellow-500 fill-yellow-500" />
-                        <span className="font-semibold">{product.rating}</span>
-                        <span className="text-sm text-muted-foreground">({product.reviews})</span>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="p-4 pt-0 flex items-center justify-between">
-                      <div className="text-2xl font-bold text-primary">{product.price} ₽</div>
-                      <Button size="sm">
-                        <Icon name="ShoppingCart" size={16} className="mr-2" />
-                        В корзину
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                  <ProductCard key={product.id} product={product} compact />
                 ))}
               </div>
             </section>
@@ -285,36 +225,7 @@ const Index = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {filteredProducts.map(product => (
-                <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                  <CardHeader className="p-0">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-56 object-cover"
-                    />
-                  </CardHeader>
-                  <CardContent className="p-5">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary">
-                        {product.category === 'dry' ? 'Сухой корм' : 'Влажный корм'}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-xl mb-2">{product.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground mb-3">{product.description}</p>
-                    <div className="flex items-center gap-1 mb-3">
-                      <Icon name="Star" size={16} className="text-yellow-500 fill-yellow-500" />
-                      <span className="font-semibold">{product.rating}</span>
-                      <span className="text-sm text-muted-foreground">({product.reviews} отзывов)</span>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-5 pt-0 flex items-center justify-between">
-                    <div className="text-2xl font-bold text-primary">{product.price} ₽</div>
-                    <Button>
-                      <Icon name="ShoppingCart" size={18} className="mr-2" />
-                      В корзину
-                    </Button>
-                  </CardFooter>
-                </Card>
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </div>
@@ -353,37 +264,7 @@ const Index = () => {
             <h2 className="text-3xl font-bold mb-6">Отзывы покупателей</h2>
             <div className="grid gap-6">
               {reviews.map(review => (
-                <Card key={review.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <CardTitle className="text-lg">{review.author}</CardTitle>
-                          <div className="flex items-center gap-1">
-                            {[...Array(5)].map((_, i) => (
-                              <Icon
-                                key={i}
-                                name="Star"
-                                size={16}
-                                className={i < review.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {review.date} • {review.product}
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-foreground mb-4">{review.text}</p>
-                    <Button variant="ghost" size="sm">
-                      <Icon name="ThumbsUp" size={16} className="mr-2" />
-                      Полезно ({review.helpful})
-                    </Button>
-                  </CardContent>
-                </Card>
+                <ReviewCard key={review.id} review={review} />
               ))}
             </div>
             
@@ -470,50 +351,7 @@ const Index = () => {
         )}
       </main>
 
-      <footer className="bg-muted mt-16 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Icon name="Cat" size={28} className="text-primary" />
-                <h3 className="text-xl font-bold">КотоМаркет</h3>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Лучшие корма для вашего питомца с доставкой по всей России
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Каталог</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Сухие корма</li>
-                <li>Влажные корма</li>
-                <li>Корма для котят</li>
-                <li>Диетические корма</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Информация</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>О компании</li>
-                <li>Доставка и оплата</li>
-                <li>Возврат товара</li>
-                <li>Блог</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Контакты</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>+7 (800) 123-45-67</li>
-                <li>info@kotomarket.ru</li>
-                <li>Москва, ул. Примерная, 123</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            © 2024 КотоМаркет. Все права защищены.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
